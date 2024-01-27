@@ -1,0 +1,25 @@
+table {
+    width: 100%;
+  }
+  
+  th {
+    height: 70px;
+  }
+
+thead {
+    background-color: black;
+    color: white;
+}
+
+
+tbody {
+    width: 20%;
+    text-align: center;
+    background-color: rgb(5, 128, 165);
+    color: rgb(255, 255, 255);
+    font-weight: 3em;
+}
+
+tr {
+    height: 30px;
+}
