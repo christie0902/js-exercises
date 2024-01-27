@@ -31,13 +31,21 @@ body.appendChild(list);
 list.className = "list";
 
 const showList = () => {
-  shoppingList.forEach((listItem) => {
+  shoppingList.forEach((listItem, i) => {
     const item = document.createElement("li");
     item.className = "item";
     list.appendChild(item);
     const removeButton = document.createElement("button");
     removeButton.innerText = "Remove";
     list.append(removeButton);
+    removeButton.addEventListener("click", (event) => {
+      shoppingList.splice(
+        shoppingList.findIndex((listEntry) => listEntry === listItem),
+        1
+      );
+      list.innerHTML = "";
+      showList();
+    });
     item.innerText += `${listItem.item}, amount:${listItem.count}`;
   });
 };
@@ -46,7 +54,19 @@ showList();
 
 const addItem = (item, amount) => {
   list.innerHTML = "";
-  shoppingList.push({ item: item, count: amount });
+  let itemExists = false;
+
+  shoppingList.forEach((listItem) => {
+    if (item === listItem.item) {
+      listItem.count += Number(amount);
+      itemExists = true;
+    }
+  });
+
+  if (!itemExists) {
+    shoppingList.push({ item: item, count: Number(amount) });
+  }
+
   showList();
 };
 
