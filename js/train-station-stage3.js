@@ -161,13 +161,11 @@ departures.forEach((row) => {
   trackCell.classList.add("board__track");
   trackCell.textContent = row.track;
   rowElm.appendChild(trackCell);
-  let statusOnTime = false;
 
   // Create and append the button with event listener
   const btnDelay = document.createElement("button");
   btnDelay.classList.add("btn-delay");
   btnDelay.textContent = "delay";
-
 
   // Declare textField outside of the click event listener
   let textField;
@@ -176,13 +174,13 @@ departures.forEach((row) => {
     rowElm.classList.toggle("row-delayed");
     // create text field on click
     if (statusCell.textContent === "On Time") {
-      statusOnTime = true;
   
       // Create textField only if it doesn't exist
       if (!textField) {
         textField = document.createElement("input");
         textField.classList.add("input");
         textField.setAttribute("placeholder", "number + press enter");
+        textField.setAttribute("type", "number");
   
         // Add event listener for keypress
         textField.addEventListener("keypress", (event) => {
@@ -191,9 +189,12 @@ departures.forEach((row) => {
             row.status = "Delayed";
           }
         });
-  
         rowElm.appendChild(textField);
+      } else {
+        textField.remove();
+      textField = null; 
       }
+      
     } else {
       statusCell.textContent = "On Time";
       row.status = "On Time";
