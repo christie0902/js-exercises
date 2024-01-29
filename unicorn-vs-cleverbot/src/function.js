@@ -28,3 +28,22 @@ const displayWithDelay = (messages, i) => {
 };
 
 export { appendMessage, displayWithDelay, chatScreen };
+
+// example with interval
+let i = 0;
+const intervalId = setInterval(() => {
+  if (i === messages.length - 1) {
+    clearInterval(loop);
+  }
+  const messageContainer = document.createElement("div");
+  messageContainer.className = `message message--${messages[i].side}`;
+
+  const messageText = document.createElement("div");
+  messageText.className = "message__text";
+  messageText.innerText = messages[i].text;
+
+  messageContainer.appendChild(messageText);
+  conversationContainer.appendChild(messageContainer);
+
+  i++;
+}, duration);
