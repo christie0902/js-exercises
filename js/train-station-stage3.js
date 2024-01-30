@@ -127,94 +127,151 @@ const departures = [
 // });
 
 const tbody = document.querySelector(".board__table tbody");
-departures.forEach((row) => {
-  // Create table row element
-  const rowElm = document.createElement("tr");
 
-  // Create and append each cell to the table row
-  const timeCell = document.createElement("td");
-  timeCell.classList.add("board__time");
-  timeCell.textContent = `${row.time.hrs}:${row.time.mins}`;
-  rowElm.appendChild(timeCell);
+const loadSchedule = (array) => {
+  array.forEach((row) => {
+    // Create table row element
+    const rowElm = document.createElement("tr");
 
-  const trainCell = document.createElement("td");
-  trainCell.classList.add("board__train");
-  trainCell.textContent = row.train;
-  rowElm.appendChild(trainCell);
+    // Create and append each cell to the table row
+    const timeCell = document.createElement("td");
+    timeCell.classList.add("board__time");
+    timeCell.textContent = `${row.time.hrs}:${row.time.mins}`;
+    rowElm.appendChild(timeCell);
 
-  const noCell = document.createElement("td");
-  noCell.classList.add("board__no");
-  noCell.textContent = row.no;
-  rowElm.appendChild(noCell);
+    const trainCell = document.createElement("td");
+    trainCell.classList.add("board__train");
+    trainCell.textContent = row.train;
+    rowElm.appendChild(trainCell);
 
-  const toCell = document.createElement("td");
-  toCell.classList.add("board__to");
-  toCell.textContent = row.to;
-  rowElm.appendChild(toCell);
+    const noCell = document.createElement("td");
+    noCell.classList.add("board__no");
+    noCell.textContent = row.no;
+    rowElm.appendChild(noCell);
 
-  const statusCell = document.createElement("td");
-  statusCell.classList.add("board__status");
-  statusCell.textContent = row.status;
-  rowElm.appendChild(statusCell);
+    const toCell = document.createElement("td");
+    toCell.classList.add("board__to");
+    toCell.textContent = row.to;
+    rowElm.appendChild(toCell);
 
-  const trackCell = document.createElement("td");
-  trackCell.classList.add("board__track");
-  trackCell.textContent = row.track;
-  rowElm.appendChild(trackCell);
+    const statusCell = document.createElement("td");
+    statusCell.classList.add("board__status");
+    statusCell.textContent = row.status;
+    rowElm.appendChild(statusCell);
 
-  // Create and append the button with event listener
-  const btnDelay = document.createElement("button");
-  btnDelay.classList.add("btn-delay");
-  btnDelay.textContent = "delay";
+    const trackCell = document.createElement("td");
+    trackCell.classList.add("board__track");
+    trackCell.textContent = row.track;
+    rowElm.appendChild(trackCell);
 
-  // Declare textField outside of the click event listener
-  let textField;
+    // Create and append the button with event listener
+    const btnDelay = document.createElement("button");
+    btnDelay.classList.add("btn-delay");
+    btnDelay.textContent = "delay";
 
-  btnDelay.addEventListener("click", () => {
-    rowElm.classList.toggle("row-delayed");
-    // create text field on click
-    if (statusCell.textContent === "On Time") {
-  
-      // Create textField only if it doesn't exist
-      if (!textField) {
-        textField = document.createElement("input");
-        textField.classList.add("input");
-        textField.setAttribute("placeholder", "number + press enter");
-        textField.setAttribute("type", "number");
-  
-        // Add event listener for keypress
-        textField.addEventListener("keypress", (event) => {
-          if (event.key === "Enter") {
-            statusCell.textContent = `${textField.value}min delay`;
-            row.status = "Delayed";
-          }
-        });
-        rowElm.appendChild(textField);
+    // Declare textField outside of the click event listener
+    let textField;
+
+    btnDelay.addEventListener("click", () => {
+      rowElm.classList.toggle("row-delayed");
+      // create text field on click
+      if (statusCell.textContent === "On Time") {
+        // Create textField only if it doesn't exist
+        if (!textField) {
+          textField = document.createElement("input");
+          textField.classList.add("input");
+          textField.setAttribute("placeholder", "number + press enter");
+          textField.setAttribute("type", "number");
+
+          // Add event listener for keypress
+          textField.addEventListener("keypress", (event) => {
+            if (event.key === "Enter") {
+              statusCell.textContent = `${textField.value}min delay`;
+              row.status = "Delayed";
+            }
+          });
+          rowElm.appendChild(textField);
+        } else {
+          textField.remove();
+          textField = null;
+        }
       } else {
-        textField.remove();
-      textField = null; 
-      }
-      
-    } else {
-      statusCell.textContent = "On Time";
-      row.status = "On Time";
-  
-      // Remove textField only if it exists
-      if (textField) {
-        textField.remove();
-        textField = null; // Set textField to null after removal
-      }
-    }
-  });
+        statusCell.textContent = "On Time";
+        row.status = "On Time";
 
+        // Remove textField only if it exists
+        if (textField) {
+          textField.remove();
+          textField = null; // Set textField to null after removal
+        }
+      }
+    });
 
     // Shorthand
     // statusCell.textContent= statusCell.textContent === "On Time"? "Delayed":"On Time"
 
-  const btnCell = document.createElement("td");
-  btnCell.appendChild(btnDelay);
-  rowElm.appendChild(btnCell);
+    const btnCell = document.createElement("td");
+    btnCell.appendChild(btnDelay);
+    rowElm.appendChild(btnCell);
 
-  // Append the table row to the table's tbody
-  tbody.appendChild(rowElm);
+    // Append the table row to the table's tbody
+    tbody.appendChild(rowElm);
+  });
+};
+
+const loadBtn = document.querySelector(".load");
+const board = document.querySelector(".board");
+const body = document.body;
+const loadContainer = document.createElement("div");
+loadContainer.innerHTML = '<img src="../img/2.gif" alt="loading">';
+loadContainer.style.position = "absolute";
+loadContainer.style.top = "50";
+loadContainer.style.display = "none";
+
+// loadContainer.style.display = "none";
+body.appendChild(loadContainer);
+
+loadBtn.addEventListener("click", (event) => {
+  showLoading();
+  const loadData = async () => {
+    const response = await fetch(
+      "https://classes.codingbootcamp.cz/assets/classes/api/departures-slow.php"
+    );
+    const data = await response.json();
+    console.log(data);
+    loadSchedule(data);
+    refreshData();
+  };
+  loadData();
 });
+
+const showLoading = () => {
+  loadBtn.style.display = "none";
+  board.style.display = "none";
+  loadContainer.style.display = "block";
+};
+
+const refreshData = () => {
+  loadBtn.style.display = "block";
+  board.style.display = "block";
+  loadContainer.style.display = "none";
+};
+
+loadSchedule(departures);
+
+// const loadData = async () => {
+//   try {
+//     const response = await fetch(
+//       "https://classes.codingbootcamp.cz/assets/classes/api/departures-slow.php"
+//     );
+//     const data = await response.json();
+
+//     // Call your function with the response data
+//     loadSchedule(data);
+
+//     // You can continue with other code after processing the data if needed
+//     console.log("Data loaded successfully!");
+//   } catch (error) {
+//     console.error("Error loading data:", error);
+//   }
+// };

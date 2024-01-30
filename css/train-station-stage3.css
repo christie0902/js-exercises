@@ -80,3 +80,12 @@ body {
 .row-delayed {
   background-color: orange !important;
 }
+
+.load {
+  background-color: blanchedalmond;
+  color: black;
+  font-size: 3rem;
+  margin-right: 100px;
+  border-radius: 20px;
+  padding: 10px;
+}
